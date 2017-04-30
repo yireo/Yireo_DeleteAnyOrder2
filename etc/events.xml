@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd"><event name="sales_order_delete_after"><observer name="yireo_deleteanyorder2_order_delete_cleanup" instance="Yireo\DeleteAnyOrder2\Observer\Deleteanyorder2\Order\Delete\Cleanup"/></event></config>
