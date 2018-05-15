@@ -3,7 +3,9 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="yireo_deleteanyorder2_command_deleteorder" xsi:type="object">Yireo\DeleteAnyOrder2\Command\DeleteOrder</item>
+                <item name="yireo_deleteanyorder2_command_delete_order" xsi:type="object">Yireo\DeleteAnyOrder2\Command\DeleteOrder</item>
+                <item name="yireo_deleteanyorder2_command_analyse_database" xsi:type="object">Yireo\DeleteAnyOrder2\Command\AnalyseDatabase</item>
+                <item name="yireo_deleteanyorder2_command_fix_database" xsi:type="object">Yireo\DeleteAnyOrder2\Command\FixDatabase</item>
             </argument>
         </arguments>
     </type>

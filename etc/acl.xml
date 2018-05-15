@@ -3,9 +3,7 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Yireo_DeleteAnyOrder2::top" title="TITLE HERE FOR">
-                    <resource id="Yireo_DeleteAnyOrder2::config" title="TITLE HERE FOR"/>
-                </resource>
+                <resource id="Yireo_DeleteAnyOrder2::main" title="Delete Any Order" />
             </resource>
         </resources>
     </acl>

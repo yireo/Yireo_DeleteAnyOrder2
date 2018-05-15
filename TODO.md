@@ -1,2 +1,1 @@
-Ibnab Delete Order
-https://marketplace.magento.com/wyomind-ordereraser-meta.html
+- Cleanup invoice items and shipment tips
