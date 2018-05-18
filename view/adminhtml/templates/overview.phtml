@@ -1,6 +1,38 @@
 <?php
-/** @var $block Overview */
+/** @var $block Template */
 
-use Yireo\DeleteAnyOrder2\Block\Adminhtml\Overview;
+use Magento\Backend\Block\Template;
+use Yireo\DeleteAnyOrder2\ViewModel\Fixer as FixerViewModel;
+
+/** @var FixerViewModel $viewModel */
+$viewModel = $block->getFixerViewModel();
+$tables = $viewModel->getTables();
 ?>
-test
+<div class="admin__data-grid-wrap">
+    <table class="data-grid">
+        <thead>
+        <th class="data-grid-th">
+            <span class="data-grid-cell-content"><?= __('Database Table') ?></span>
+        </th>
+        <th class="data-grid-th">
+            <span class="data-grid-cell-content"><?= __('Total Records') ?></span>
+        </th>
+        <th class="data-grid-th">
+            <span class="data-grid-cell-content"><?= __('Found Orphans') ?></span>
+        </th>
+        </thead>
+        <tbody>
+        <?php $i = 0; ?>
+        <?php foreach ($tables as $table) : ?>
+        <?php $rowClass = ($i % 2 == 0) ? '_odd-row' : ''; ?>
+            <tr class="data-row <?= $rowClass ?>">
+                <td><?= $table->getTableName() ?></td>
+                <td><?= $viewModel->getTotalsPerTable($table) ?></td>
+                <td><?= $viewModel->getOrphansPerTable($table) ?></td>
+            </tr>
+        <?php $i++; ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+</div>

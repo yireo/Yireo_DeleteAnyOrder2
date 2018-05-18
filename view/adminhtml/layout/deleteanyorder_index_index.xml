@@ -2,7 +2,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="content">
-            <block name="overview" class="Yireo\DeleteAnyOrder2\Block\Adminhtml\Overview" template="overview.phtml" />
+            <block name="overview" template="Yireo_DeleteAnyOrder2::overview.phtml">
+                <arguments>
+                    <argument name="fixer_view_model" xsi:type="object">\Yireo\DeleteAnyOrder2\ViewModel\Fixer</argument>
+                </arguments>
+            </block>
+            <uiComponent name="deleteanyorder_form"/>
         </referenceBlock>
     </body>
 </page>

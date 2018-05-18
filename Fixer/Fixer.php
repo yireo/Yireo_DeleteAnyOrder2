@@ -52,23 +52,34 @@ class Fixer
     private $tableFactory;
 
     /**
+     * @var int
+     */
+    private $verbosity = 0;
+
+    /**
      * Fixer constructor.
      *
      * @param ResourceConnection $resourceConnection
      * @param OrderIdProvider $orderIdProvider
      * @param TableProvider $tableProvider
      * @param TableFactory $tableFactory
+     * @param int $verbosity
      */
     public function __construct(
         ResourceConnection $resourceConnection,
         OrderIdProvider $orderIdProvider,
         TableProvider $tableProvider,
-        TableFactory $tableFactory
+        TableFactory $tableFactory,
+        $verbosity = 0
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->orderIdProvider = $orderIdProvider;
         $this->tableProvider = $tableProvider;
         $this->tableFactory = $tableFactory;
+        $this->verbosity = $verbosity;
+
+        $this->connection = $this->resourceConnection->getConnection();
+        $this->currentOrderIds = $this->orderIdProvider->getData();
     }
 
     /**
@@ -78,14 +89,11 @@ class Fixer
     {
         $this->loggerCallback = $loggerCallback;
 
-        $this->currentOrderIds = $this->orderIdProvider->getData();
         $this->log('Found %d valid orders', count($this->currentOrderIds));
 
         if (empty($this->currentOrderIds)) {
             throw new RuntimeException('No orders to clean up');
         }
-
-        $this->connection = $this->resourceConnection->getConnection();
     }
 
     /**
@@ -93,18 +101,43 @@ class Fixer
      */
     public function analyse(callable $loggerCallback)
     {
-        $this->init($loggerCallback);
         $this->loggerCallback = $loggerCallback;
 
         foreach ($this->getTables() as $table) {
+            $orphans = $this->getOrphansPerTable($table);
             $tableName = $table->getTableName();
-            $orderIdField = $table->getOrderIdField();
-            $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)';
-            $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
-
-            $results = $this->connection->fetchAll($sql);
-            $this->log(sprintf('Found %d order orphans in %s', count($results), $tableName));
+            $this->log(sprintf('Found %d order orphans in %s', count($orphans), $tableName));
         }
+    }
+
+    /**
+     * @param AbstractTable $table
+     *
+     * @return int
+     */
+    public function getOrphansPerTable(AbstractTable $table): int
+    {
+        $tableName = $table->getTableName();
+        $orderIdField = $table->getOrderIdField();
+        $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)';
+        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
+
+        return count($this->connection->fetchAll($sql));
+    }
+
+    /**
+     * @param AbstractTable $table
+     *
+     * @return int
+     */
+    public function getTotalsPerTable(AbstractTable $table): int
+    {
+        $tableName = $table->getTableName();
+        $orderIdField = $table->getOrderIdField();
+        $query = 'SELECT `%s` FROM `%s`';
+        $sql = sprintf($query, $orderIdField, $tableName);
+
+        return count($this->connection->fetchAll($sql));
     }
 
     /**
@@ -122,7 +155,11 @@ class Fixer
             $sql = sprintf($query, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
 
             $this->connection->query($sql);
-            $this->log($sql);
+
+            if ($this->verbosity > 0) {
+                $this->log($sql);
+            }
+
             $this->log(sprintf('Removed all orders orphans in %s', $tableName));
         }
     }
@@ -130,7 +167,7 @@ class Fixer
     /**
      * @return AbstractTable[]
      */
-    private function getTables(): array
+    public function getTables(): array
     {
         $tables = [];
         $tableClasses = $this->tableProvider->getTableClasses();
