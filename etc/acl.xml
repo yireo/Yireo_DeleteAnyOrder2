@@ -3,7 +3,11 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Yireo_DeleteAnyOrder2::main" title="Delete Any Order" />
+                <resource id="Magento_Backend::system" title="System" translate="title" sortOrder="90">
+                    <resource id="Magento_Backend::tools" title="Tools" translate="title" sortOrder="50">
+                        <resource id="Yireo_DeleteAnyOrder2::main" title="Delete Any Order"/>
+                    </resource>
+                </resource>
             </resource>
         </resources>
     </acl>

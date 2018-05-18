@@ -93,4 +93,4 @@ class DeleteOrder extends Command
 
         $output->writeln("Removed order succesfully");
     }
-} 
+}

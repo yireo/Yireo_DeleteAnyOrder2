@@ -24,8 +24,7 @@ class TableFactory
      */
     public function __construct(
         ObjectManagerInterface $objectManager
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
     }
 

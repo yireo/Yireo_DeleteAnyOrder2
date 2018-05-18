@@ -73,12 +73,4 @@ class MassDelete extends Action
 
         return true;
     }
-
-    /**
-     * @return bool
-     */
-    protected function _isAllowed(): bool
-    {
-        return $this->_authorization->isAllowed(self::ADMIN_RESOURCE);
-    }
 }

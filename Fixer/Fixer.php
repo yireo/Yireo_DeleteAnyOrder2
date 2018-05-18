@@ -99,7 +99,8 @@ class Fixer
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $orderIdField = $table->getOrderIdField();
-            $sql = sprintf('SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)', $orderIdField, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
+            $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)';
+            $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
 
             $results = $this->connection->fetchAll($sql);
             $this->log(sprintf('Found %d order orphans in %s', count($results), $tableName));
@@ -117,7 +118,8 @@ class Fixer
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $orderIdField = $table->getOrderIdField();
-            $sql = sprintf('DELETE FROM `%s` WHERE `%s` NOT IN (%s)', $tableName, $orderIdField, implode(',', $this->currentOrderIds));
+            $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (%s)';
+            $sql = sprintf($query, $tableName, $orderIdField, implode(',', $this->currentOrderIds));
 
             $this->connection->query($sql);
             $this->log($sql);
@@ -128,7 +130,7 @@ class Fixer
     /**
      * @return AbstractTable[]
      */
-    private function getTables() : array
+    private function getTables(): array
     {
         $tables = [];
         $tableClasses = $this->tableProvider->getTableClasses();
