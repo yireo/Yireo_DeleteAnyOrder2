@@ -12,7 +12,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 /**
  * Class MassDelete
  *
- * @package Yireo\DeleteAnyOrder2\Controller\Adminhtml\Indexer
+ * @package Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order
  */
 class MassDelete extends Action
 {
@@ -20,6 +20,7 @@ class MassDelete extends Action
      * ACL resource
      */
     const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::main';
+
     /**
      * @var OrderRepositoryInterface
      */
