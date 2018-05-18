@@ -15,7 +15,7 @@ class OverviewTest extends AbstractBackendController
      */
     public function setUp()
     {
-        $this->resource = 'Yireo_DeleteAnyOrder2::index';
+        $this->resource = 'Yireo_DeleteAnyOrder2::main';
         $this->uri = 'backend/deleteanyorder/index/index';
         parent::setUp();
     }
