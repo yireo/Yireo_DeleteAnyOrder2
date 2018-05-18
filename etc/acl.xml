@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Yireo DeleteAnyOrder2 for Magento
+ *
+ * @package     Yireo_DeleteAnyOrder2
+ * @author      Yireo (https://www.yireo.com/)
+ * @copyright   Copyright 2018 Yireo (https://www.yireo.com/)
+ * @license     Open Source License (OSL v3)
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Magento_Backend::system" title="System" translate="title" sortOrder="90">
-                    <resource id="Magento_Backend::tools" title="Tools" translate="title" sortOrder="50">
-                        <resource id="Yireo_DeleteAnyOrder2::main" title="Delete Any Order"/>
+                <resource id="Magento_Backend::system">
+                    <resource id="Magento_Backend::tools">
+                        <resource id="Yireo_DeleteAnyOrder2::main" title="Yireo DeleteAnyOrder" sortOrder="10"/>
                     </resource>
                 </resource>
             </resource>

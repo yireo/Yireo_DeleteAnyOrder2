@@ -1,6 +1,23 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * DeleteAnyOrder2 plugin for Magento 2
+ *
+ * @package     Yireo_DeleteAnyOrder2
+ * @author      Yireo
+ * @copyright   Copyright 2018 Yireo (https://www.yireo.com/)
+ * @license     Open Source License
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Yireo_DeleteAnyOrder2::overview" resource="Yireo_DeleteAnyOrder2::overview" title="Delete Any Order" action="deleteanyorder/index/index" module="Yireo_DeleteAnyOrder2" sortOrder="90" parent="Magento_Backend::system_tools" dependsOnModule="Magento_Backend"/>
+        <add id="Yireo_DeleteAnyOrder2::overview"
+             title="Delete Any Order"
+             module="Yireo_DeleteAnyOrder2"
+             resource="Yireo_DeleteAnyOrder2::overview"
+             action="deleteanyorder/index/index"
+             sortOrder="90"
+             parent="Magento_Backend::system_tools"
+        />
     </menu>
 </config>
