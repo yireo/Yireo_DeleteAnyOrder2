@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Command;
 
+use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry;
 use Magento\Sales\Api\OrderRepositoryInterface;
@@ -24,7 +25,7 @@ class DeleteOrder extends Command
     private $orderRepository;
 
     /**
-     * @var \Magento\Framework\App\State
+     * @var State
      */
     private $state;
 
@@ -37,13 +38,13 @@ class DeleteOrder extends Command
      * DeleteOrder constructor.
      *
      * @param OrderRepositoryInterface $orderRepository
-     * @param \Magento\Framework\App\State $state
+     * @param State $state
      * @param Registry $registry
      * @param null $name
      */
     public function __construct(
         OrderRepositoryInterface $orderRepository,
-        \Magento\Framework\App\State $state,
+        State $state,
         Registry $registry,
         $name = null
     ) {
