@@ -27,7 +27,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Yireo\\EmailTester2\\": ""
+      "Yireo\\DeleteAnyOrder2\\": ""
     },
     "files": [
       "registration.php"
