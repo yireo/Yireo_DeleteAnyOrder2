@@ -1,0 +1,36 @@
+{
+  "name": "yireo/magento2-deleteanyorder2",
+  "version": "1.0.0",
+  "license": "OSL-3.0",
+  "type": "magento2-module",
+  "homepage": "https://www.yireo.com/software/magento-extensions/delete-any-order-2",
+  "description": "Delete any Magento order safely from the database",
+  "keywords": [
+    "composer-installer",
+    "magento"
+  ],
+  "authors": [
+    {
+      "name": "Jisse Reitsma (Yireo)",
+      "email": "jisse@yireo.com"
+    }
+  ],
+  "require": {
+    "magento/module-backend": "^100.2",
+    "magento/module-sales": "^100",
+    "magento/module-ui": "^101.0",
+    "php": ">=7.0.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*",
+    "composer/composer": "*@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "Yireo\\EmailTester2\\": ""
+    },
+    "files": [
+      "registration.php"
+    ]
+  }
+}
