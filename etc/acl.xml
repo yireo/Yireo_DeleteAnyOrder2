@@ -15,7 +15,7 @@
             <resource id="Magento_Backend::admin">
                 <resource id="Magento_Backend::system">
                     <resource id="Magento_Backend::tools">
-                        <resource id="Yireo_DeleteAnyOrder2::main" title="Yireo DeleteAnyOrder" sortOrder="10"/>
+                        <resource id="Yireo_DeleteAnyOrder2::index" title="Yireo DeleteAnyOrder" sortOrder="10"/>
                     </resource>
                 </resource>
             </resource>

@@ -18,7 +18,7 @@ class Index extends Action
     /**
      * ACL resource
      */
-    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::main';
+    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::index';
 
     /**
      * @var PageFactory
@@ -44,7 +44,10 @@ class Index extends Action
      */
     public function execute(): ResultInterface
     {
-        $page = $this->pageFactory->create();
-        return $page;
+        /** @var \Magento\Framework\View\Result\Page $resultPage */
+        $resultPage = $this->pageFactory->create();
+        $resultPage->getConfig()->getTitle()->prepend(__('Yireo DeleteAnyOrder'));
+
+        return $resultPage;
     }
 }

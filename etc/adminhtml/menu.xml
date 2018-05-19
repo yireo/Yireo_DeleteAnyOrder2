@@ -11,10 +11,10 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Yireo_DeleteAnyOrder2::overview"
+        <add id="Yireo_DeleteAnyOrder2::index"
              title="Delete Any Order"
              module="Yireo_DeleteAnyOrder2"
-             resource="Yireo_DeleteAnyOrder2::overview"
+             resource="Yireo_DeleteAnyOrder2::index"
              action="deleteanyorder/index/index"
              sortOrder="90"
              parent="Magento_Backend::system_tools"

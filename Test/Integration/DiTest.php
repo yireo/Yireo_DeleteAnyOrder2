@@ -18,6 +18,6 @@ class DiTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Fixer $fixer */
         $fixer = Bootstrap::getObjectManager()->create(Fixer::class);
-        $this->assertEquals(get_class($fixer), Fixer::class);
+        $this->assertInstanceOf(Fixer::class, $fixer);
     }
 }

@@ -20,7 +20,7 @@ class Fix extends Action
     /**
      * ACL resource
      */
-    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::main';
+    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::index';
 
     /**
      * @var Fixer

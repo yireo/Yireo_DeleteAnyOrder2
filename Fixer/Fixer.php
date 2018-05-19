@@ -123,12 +123,17 @@ class Fixer
      *
      * @return int
      */
-    public function getOrphansPerTable(AbstractTable $table)
+    public function getOrphansPerTable(AbstractTable $table): int
     {
+        $currentOrderIds = $this->getCurrentOrderIds();
+        if (empty($currentOrderIds)) {
+            return 0;
+        }
+
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
         $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)';
-        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $this->getCurrentOrderIds()));
+        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $currentOrderIds));
 
         return count($this->getConnection()->fetchAll($sql));
     }
@@ -138,7 +143,7 @@ class Fixer
      *
      * @return int
      */
-    public function getTotalsPerTable(AbstractTable $table)
+    public function getTotalsPerTable(AbstractTable $table): int
     {
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
