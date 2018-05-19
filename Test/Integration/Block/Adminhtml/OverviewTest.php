@@ -6,7 +6,7 @@ namespace Yireo\DeleteAnyOrder2\Test\Integration\Block\Adminhtml;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 
 /**
- * @magentoAppArea adminhtml
+ *
  */
 class OverviewTest extends AbstractBackendController
 {
