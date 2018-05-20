@@ -132,8 +132,8 @@ class Fixer
 
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
-        $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (%s)';
-        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField, implode(',', $currentOrderIds));
+        $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
+        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField);
 
         return count($this->getConnection()->fetchAll($sql));
     }
@@ -158,14 +158,25 @@ class Fixer
      */
     public function fix(callable $loggerCallback)
     {
-        $this->init($loggerCallback);
+        try {
+            $this->init($loggerCallback);
+        } catch(RuntimeException $e) {
+        }
+
+        $orderIds = $this->getCurrentOrderIds();
         $this->loggerCallback = $loggerCallback;
 
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $orderIdField = $table->getOrderIdField();
-            $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (%s)';
-            $sql = sprintf($query, $tableName, $orderIdField, implode(',', $this->getCurrentOrderIds()));
+
+            if (empty($orderIds)) {
+                $query = 'DELETE FROM `%s` WHERE `%s`';
+            } else {
+                $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
+            }
+
+            $sql = sprintf($query, $tableName, $orderIdField, implode(',', $orderIds));
 
             $this->getConnection()->query($sql);
 

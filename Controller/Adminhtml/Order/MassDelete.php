@@ -48,7 +48,7 @@ class MassDelete extends Action
      */
     public function execute(): ResultInterface
     {
-        $orderIds = $this->_request->getParam('selected');
+        $orderIds = $this->getOrderIds();
         if ($this->deleteByOrderIds($orderIds)) {
             $this->messageManager->addNoticeMessage(sprintf('Removed %d orders', count($orderIds)));
         } else {
@@ -58,6 +58,15 @@ class MassDelete extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('sales/order/index');
         return $resultRedirect;
+    }
+
+    /**
+     * @return array
+     */
+    private function getOrderIds(): array
+    {
+        $orderIds = $this->_request->getParam('selected');
+        return (array) $orderIds;
     }
 
     /**
