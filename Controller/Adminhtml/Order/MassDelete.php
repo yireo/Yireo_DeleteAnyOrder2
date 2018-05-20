@@ -50,7 +50,8 @@ class MassDelete extends Action
     {
         $orderIds = $this->getOrderIds();
         if ($this->deleteByOrderIds($orderIds)) {
-            $this->messageManager->addNoticeMessage(sprintf('Removed %d orders', count($orderIds)));
+            $count = count($orderIds);
+            $this->messageManager->addNoticeMessage(sprintf('Removed %d orders', $count));
         } else {
             $this->messageManager->addNoticeMessage('Removed 0 orders');
         }

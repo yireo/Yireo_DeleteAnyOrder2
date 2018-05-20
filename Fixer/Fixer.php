@@ -112,9 +112,9 @@ class Fixer
         $this->loggerCallback = $loggerCallback;
 
         foreach ($this->getTables() as $table) {
-            $orphans = $this->getOrphansPerTable($table);
+            $orphans = $this->getOrphansCountPerTable($table);
             $tableName = $table->getTableName();
-            $this->log(sprintf('Found %d order orphans in %s', count($orphans), $tableName));
+            $this->log(sprintf('Found %d order orphans in %s', $orphans, $tableName));
         }
     }
 
@@ -123,7 +123,7 @@ class Fixer
      *
      * @return int
      */
-    public function getOrphansPerTable(AbstractTable $table): int
+    public function getOrphansCountPerTable(AbstractTable $table): int
     {
         $currentOrderIds = $this->getCurrentOrderIds();
         if (empty($currentOrderIds)) {
@@ -132,10 +132,10 @@ class Fixer
 
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
-        $query = 'SELECT `%s` FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
+        $query = 'SELECT COUNT(`%s`) FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
         $sql = sprintf($query, $orderIdField, $tableName, $orderIdField);
 
-        return count($this->getConnection()->fetchAll($sql));
+        return (int)$this->getConnection()->fetchOne($sql);
     }
 
     /**
@@ -147,10 +147,10 @@ class Fixer
     {
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
-        $query = 'SELECT `%s` FROM `%s`';
+        $query = 'SELECT COUNT(`%s`) FROM `%s`';
         $sql = sprintf($query, $orderIdField, $tableName);
 
-        return count($this->getConnection()->fetchAll($sql));
+        return (int)$this->getConnection()->fetchOne($sql);
     }
 
     /**
@@ -160,17 +160,18 @@ class Fixer
     {
         try {
             $this->init($loggerCallback);
-        } catch(RuntimeException $e) {
+        } catch (RuntimeException $e) {
         }
 
         $orderIds = $this->getCurrentOrderIds();
+        $hasOrderIds = (empty($orderIds)) ? false : true;
         $this->loggerCallback = $loggerCallback;
 
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $orderIdField = $table->getOrderIdField();
 
-            if (empty($orderIds)) {
+            if ($hasOrderIds) {
                 $query = 'DELETE FROM `%s` WHERE `%s`';
             } else {
                 $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';

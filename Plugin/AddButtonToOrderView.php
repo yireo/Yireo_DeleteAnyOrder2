@@ -27,7 +27,7 @@ class AddButtonToOrderView
     public function __construct(
         RequestInterface $request,
         UrlInterface $url
-    ){
+    ) {
         $this->request = $request;
         $this->url = $url;
     }
@@ -49,8 +49,6 @@ class AddButtonToOrderView
                 'onclick' => "confirmSetLocation('{$message}', '{$deleteUrl}')"
             ]
         );
-
-        return;
     }
 
     /**
@@ -67,6 +65,6 @@ class AddButtonToOrderView
      */
     public function getOrderId(): int
     {
-        return (int) $this->request->getParam('order_id');
+        return (int)$this->request->getParam('order_id');
     }
 }

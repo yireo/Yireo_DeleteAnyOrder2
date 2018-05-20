@@ -38,9 +38,9 @@ class Fixer implements ArgumentInterface
      *
      * @return int
      */
-    public function getOrphansPerTable(AbstractTable $table): int
+    public function getOrphansCountPerTable(AbstractTable $table): int
     {
-        return $this->fixer->getOrphansPerTable($table);
+        return $this->fixer->getOrphansCountPerTable($table);
     }
 
     /**

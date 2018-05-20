@@ -28,7 +28,7 @@ $tables = $viewModel->getTables();
             <tr class="data-row <?= $rowClass ?>">
                 <td><?= $table->getTableName() ?></td>
                 <td><?= $viewModel->getTotalsPerTable($table) ?></td>
-                <td><?= $viewModel->getOrphansPerTable($table) ?></td>
+                <td><?= $viewModel->getOrphansCountPerTable($table) ?></td>
             </tr>
         <?php $i++; ?>
         <?php endforeach; ?>

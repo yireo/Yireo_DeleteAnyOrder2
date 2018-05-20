@@ -36,10 +36,10 @@ class OrderId
         $connection = $this->resourceConnection->getConnection();
         $tblSalesOrder = $connection->getTableName('sales_order');
         $sql = 'SELECT `entity_id` FROM '.$tblSalesOrder;
-        $rows = $connection->fetchAll($sql);
+        $query = $connection->query($sql);
 
         $orderIds = [];
-        foreach ($rows as $row) {
+        while ($row = $query->fetch()) {
             $orderIds[] = $row['entity_id'];
         }
 
