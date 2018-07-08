@@ -7,6 +7,10 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
 use Yireo\DeleteAnyOrder2\Fixer\Fixer as MainFixer;
 
+/**
+ * Class Fixer
+ * @package Yireo\DeleteAnyOrder2\ViewModel
+ */
 class Fixer implements ArgumentInterface
 {
     /**
