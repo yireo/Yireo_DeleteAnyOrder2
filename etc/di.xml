@@ -9,4 +9,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Yireo\DeleteAnyOrder2\Command\DeleteOrder">
+        <arguments>
+            <argument name="orderRepository">\Magento\Sales\Api\OrderRepositoryInterface\Proxy</argument>
+        </arguments>
+    </type>
 </config>
