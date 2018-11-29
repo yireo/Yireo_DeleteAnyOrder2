@@ -1,3 +1,6 @@
+# 1.0.3 (November 2018)
+- Magento 2.3 compatibility
+
 # 1.0.2 (June 2018)
 - Properly add dependencies
 
