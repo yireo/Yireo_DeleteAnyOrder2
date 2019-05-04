@@ -24,15 +24,14 @@ $tables = $viewModel->getTables();
         <tbody>
         <?php $i = 0; ?>
         <?php foreach ($tables as $table) : ?>
-        <?php $rowClass = ($i % 2 == 0) ? '_odd-row' : ''; ?>
+            <?php $rowClass = ($i % 2 == 0) ? '_odd-row' : ''; ?>
             <tr class="data-row <?= $rowClass ?>">
-                <td><?= $table->getTableName() ?></td>
-                <td><?= $viewModel->getTotalsPerTable($table) ?></td>
-                <td><?= $viewModel->getOrphansCountPerTable($table) ?></td>
+                <td><?= $block->escapeHtml($table->getTableName()) ?></td>
+                <td><?= $block->escapeHtml($viewModel->getTotalsPerTable($table)) ?></td>
+                <td><?= $block->escapeHtml($viewModel->getOrphansCountPerTable($table)) ?></td>
             </tr>
-        <?php $i++; ?>
+            <?php $i++; ?>
         <?php endforeach; ?>
         </tbody>
     </table>
-
 </div>

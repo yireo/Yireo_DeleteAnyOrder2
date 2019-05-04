@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Yireo\DeleteAnyOrder2\Test\Unit\ViewModel;
 
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use Yireo\DeleteAnyOrder2\ViewModel\Fixer as TestTarget;
 use Yireo\DeleteAnyOrder2\Fixer\Fixer as MainFixer;
 use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
@@ -12,7 +13,7 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  * Class FixerTest
  * @package Yireo\DeleteAnyOrder2\Test\Unit\ViewModel
  */
-class FixerTest extends \PHPUnit\Framework\TestCase
+class FixerTest extends TestCase
 {
     /**
      * Test the behaviour of getTables()

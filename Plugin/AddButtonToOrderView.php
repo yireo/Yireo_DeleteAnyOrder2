@@ -7,12 +7,17 @@ use Magento\Backend\Block\Widget\Button\ButtonList;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 
+/**
+ * Class AddButtonToOrderView
+ * @package Yireo\DeleteAnyOrder2\Plugin
+ */
 class AddButtonToOrderView
 {
     /**
      * @var UrlInterface
      */
     private $url;
+
     /**
      * @var RequestInterface
      */
@@ -32,6 +37,10 @@ class AddButtonToOrderView
         $this->url = $url;
     }
 
+    /**
+     * @param ButtonList $subject
+     * @return int
+     */
     public function beforeGetItems(ButtonList $subject)
     {
         $orderId = $this->getOrderId();

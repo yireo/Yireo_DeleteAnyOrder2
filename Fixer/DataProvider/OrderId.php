@@ -30,12 +30,13 @@ class OrderId
 
     /**
      * @return array
+     * @throws \Zend_Db_Statement_Exception
      */
     public function getData(): array
     {
         $connection = $this->resourceConnection->getConnection();
         $tblSalesOrder = $connection->getTableName('sales_order');
-        $sql = 'SELECT `entity_id` FROM '.$tblSalesOrder;
+        $sql = 'SELECT `entity_id` FROM ' . $tblSalesOrder;
         $query = $connection->query($sql);
 
         $orderIds = [];

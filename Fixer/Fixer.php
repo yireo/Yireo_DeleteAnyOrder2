@@ -5,8 +5,10 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\OrderId as OrderIdProvider;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\Table as TableProvider;
+
 use Zend\Db\Exception\RuntimeException;
 
 /**
@@ -56,7 +58,7 @@ class Fixer
      * @param int $verbosity
      */
     public function __construct(
-        ResourceConnection\Proxy $resourceConnection,
+        ResourceConnection $resourceConnection,
         OrderIdProvider $orderIdProvider,
         TableProvider $tableProvider,
         TableFactory $tableFactory,
@@ -161,6 +163,7 @@ class Fixer
         try {
             $this->init($loggerCallback);
         } catch (RuntimeException $e) {
+            return;
         }
 
         $orderIds = $this->getCurrentOrderIds();

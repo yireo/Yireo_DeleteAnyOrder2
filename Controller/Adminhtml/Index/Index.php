@@ -6,6 +6,7 @@ namespace Yireo\DeleteAnyOrder2\Controller\Adminhtml\Index;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
 /**
@@ -44,7 +45,7 @@ class Index extends Action
      */
     public function execute(): ResultInterface
     {
-        /** @var \Magento\Framework\View\Result\Page $resultPage */
+        /** @var Page $resultPage */
         $resultPage = $this->pageFactory->create();
         $resultPage->getConfig()->getTitle()->prepend(__('Yireo DeleteAnyOrder'));
 

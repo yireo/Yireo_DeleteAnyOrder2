@@ -66,10 +66,7 @@ class MassDelete extends Action
      */
     private function getOrderIds(): array
     {
-        $selected = $this->_request->getParam('selected');
-        $excluded = $this->_request->getParam('excluded');
-
-        $orderIds = $selected;
+        $orderIds = $this->_request->getParam('selected');
         return (array) $orderIds;
     }
 

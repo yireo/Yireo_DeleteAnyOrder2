@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Model\Form;
 

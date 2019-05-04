@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Command;
 
+use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry;
+
 use Magento\Sales\Api\OrderRepositoryInterface;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -86,7 +89,7 @@ class DeleteOrder extends Command
             return;
         }
 
-        $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
+        $this->state->setAreaCode(Area::AREA_ADMINHTML);
         $this->registry->register('isSecureArea', true);
 
         $order = $this->orderRepository->get($orderId);
