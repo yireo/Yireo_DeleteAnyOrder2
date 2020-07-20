@@ -5,11 +5,8 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\OrderId as OrderIdProvider;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\Table as TableProvider;
-
-use Zend\Db\Exception\RuntimeException;
 
 /**
  * Class Fixer

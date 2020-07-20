@@ -30,7 +30,6 @@ class OrderId
 
     /**
      * @return array
-     * @throws \Zend_Db_Statement_Exception
      */
     public function getData(): array
     {
