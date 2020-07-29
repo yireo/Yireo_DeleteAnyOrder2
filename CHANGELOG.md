@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.0.5] - 29 July 2020
+### Added
+- Magento 2.4 compatibility
 - Remove PHP dep from composer
 
 ## [1.0.4] - May 2019

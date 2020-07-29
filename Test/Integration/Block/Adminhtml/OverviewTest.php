@@ -3,15 +3,13 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Test\Integration\Block\Adminhtml;
 
+use Magento\Framework\Exception\AuthenticationException;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 use Magento\TestFramework\Request;
-
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\View\Result\Page\Interceptor as ResultPage;
-
 use Magento\Backend\App\Action\Context as ActionContext;
-
 use Yireo\DeleteAnyOrder2\Controller\Adminhtml\Index\Index;
 
 /**
@@ -21,9 +19,11 @@ class OverviewTest extends AbstractBackendController
 {
     /**
      * Setup method
+     * @throws AuthenticationException
      */
-    public function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->resource = 'Yireo_DeleteAnyOrder2::index';
         $this->uri = 'backend/deleteanyorder/index/index';
     }
@@ -57,6 +57,6 @@ class OverviewTest extends AbstractBackendController
     {
         $this->dispatch($this->uri);
         $body = $this->getResponse()->getBody();
-        $this->assertContains('Delete Any Order', $body);
+        $this->assertTrue((bool)strpos($body, 'Delete Any Order'));
     }
 }
