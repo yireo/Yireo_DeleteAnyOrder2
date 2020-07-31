@@ -58,5 +58,6 @@ class OverviewTest extends AbstractBackendController
         $this->dispatch($this->uri);
         $body = $this->getResponse()->getBody();
         $this->assertTrue((bool)strpos($body, 'Delete Any Order'));
+
     }
 }
