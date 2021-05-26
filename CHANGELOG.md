@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 26 May 2021
+### Added
+- Delete in order overview asks confirmation
+
 ## [1.0.5] - 29 July 2020
 ### Added
 - Magento 2.4 compatibility

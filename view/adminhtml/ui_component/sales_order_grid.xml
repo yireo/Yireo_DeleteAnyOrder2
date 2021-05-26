@@ -4,6 +4,10 @@
         <massaction name="listing_massaction">
             <action name="delete_any_order">
                 <settings>
+                    <confirm>
+                        <message translate="true">Delete selected items?</message>
+                        <title translate="true">Delete items</title>
+                    </confirm>
                     <url path="deleteanyorder/order/massDelete"/>
                     <type>delete_any_order</type>
                     <label translate="true">Delete</label>
