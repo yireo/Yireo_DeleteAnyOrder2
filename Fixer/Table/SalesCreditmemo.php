@@ -12,13 +12,6 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  */
 class SalesCreditmemo extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'sales_creditmemo';
-
-    /**
-     * @var string
-     */
-    protected $orderIdField = 'order_id';
+    protected string $tableName = 'sales_creditmemo';
+    protected string $orderIdField = 'order_id';
 }

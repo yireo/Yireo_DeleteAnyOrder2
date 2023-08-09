@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Fixer;
 
+use Magento\Framework\App\ResourceConnection;
+
 /**
  * Class AbstractTable
  *
@@ -10,15 +12,19 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
  */
 abstract class AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected $tableName = '';
+    protected string $tableName = '';
+    protected string $orderIdField = '';
+
+    protected ResourceConnection $resourceConnection;
 
     /**
-     * @var string
+     * @param ResourceConnection $resourceConnection
      */
-    protected $orderIdField = '';
+    public function __construct(
+        ResourceConnection $resourceConnection
+    ) {
+        $this->resourceConnection = $resourceConnection;
+    }
 
     /**
      * @return string
@@ -33,6 +39,6 @@ abstract class AbstractTable
      */
     public function getTableName(): string
     {
-        return $this->tableName;
+        return $this->resourceConnection->getTableName($this->tableName);
     }
 }

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 9 August 2023
+### Fixed
+- Long-standing issue with non-working table prefix
+
 ## [1.0.6] - 26 May 2021
 ### Added
 - Delete in order overview asks confirmation

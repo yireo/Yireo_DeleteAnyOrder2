@@ -5,6 +5,7 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use RuntimeException;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\OrderId as OrderIdProvider;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\Table as TableProvider;
 
@@ -131,7 +132,8 @@ class Fixer
 
         $tableName = $table->getTableName();
         $orderIdField = $table->getOrderIdField();
-        $query = 'SELECT COUNT(`%s`) FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
+        $salesOrderTable = $this->getConnection()->getTableName('sales_order');
+        $query = 'SELECT COUNT(`%s`) FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `'.$salesOrderTable.'`)';
         $sql = sprintf($query, $orderIdField, $tableName, $orderIdField);
 
         return (int)$this->getConnection()->fetchOne($sql);
@@ -170,11 +172,12 @@ class Fixer
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $orderIdField = $table->getOrderIdField();
+            $salesOrderTable = $this->getConnection()->getTableName('sales_order');
 
             if ($hasOrderIds) {
                 $query = 'DELETE FROM `%s` WHERE `%s`';
             } else {
-                $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `sales_order`)';
+                $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `'.$salesOrderTable.'`)';
             }
 
             $sql = sprintf($query, $tableName, $orderIdField, implode(',', $orderIds));

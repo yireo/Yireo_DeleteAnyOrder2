@@ -33,10 +33,9 @@ class OrderId
      */
     public function getData(): array
     {
-        $connection = $this->resourceConnection->getConnection();
-        $tblSalesOrder = $connection->getTableName('sales_order');
-        $sql = 'SELECT `entity_id` FROM ' . $tblSalesOrder;
-        $query = $connection->query($sql);
+        $salesOrderTable = $this->resourceConnection->getTableName('sales_order');
+        $sql = 'SELECT `entity_id` FROM `'.$salesOrderTable.'`';
+        $query = $this->resourceConnection->getConnection()->query($sql);
 
         $orderIds = [];
         while ($row = $query->fetch()) {

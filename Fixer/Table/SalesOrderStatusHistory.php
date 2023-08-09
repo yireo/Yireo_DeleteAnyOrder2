@@ -12,13 +12,6 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  */
 class SalesOrderStatusHistory extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'sales_order_status_history';
-
-    /**
-     * @var string
-     */
-    protected $orderIdField = 'parent_id';
+    protected string $tableName = 'sales_order_status_history';
+    protected string $orderIdField = 'parent_id';
 }

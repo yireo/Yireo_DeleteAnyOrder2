@@ -12,13 +12,6 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  */
 class SalesOrderTax extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'sales_order_tax';
-
-    /**
-     * @var string
-     */
-    protected $orderIdField = 'order_id';
+    protected string $tableName = 'sales_order_tax';
+    protected string $orderIdField = 'order_id';
 }

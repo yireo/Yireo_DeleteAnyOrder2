@@ -12,13 +12,6 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  */
 class SalesOrderGrid extends AbstractTable
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'sales_order_grid';
-
-    /**
-     * @var string
-     */
-    protected $orderIdField = 'entity_id';
+    protected string $tableName = 'sales_order_grid';
+    protected string $orderIdField = 'entity_id';
 }
