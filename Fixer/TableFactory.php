@@ -35,7 +35,6 @@ class TableFactory
      */
     public function create(string $tableClass): AbstractTable
     {
-        $table = $this->objectManager->get($tableClass);
-        return $table;
+        return $this->objectManager->get($tableClass);
     }
 }
