@@ -47,6 +47,11 @@ class Fixer
     private $verbosity = 0;
 
     /**
+     * @var int[]
+     */
+    private $currentOrderIds = [];
+
+    /**
      * Fixer constructor.
      *
      * @param ResourceConnection $resourceConnection

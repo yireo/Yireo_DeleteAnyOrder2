@@ -39,13 +39,13 @@ class AddButtonToOrderView
 
     /**
      * @param ButtonList $subject
-     * @return int
+     * @return void
      */
     public function beforeGetItems(ButtonList $subject)
     {
         $orderId = $this->getOrderId();
         if (empty($orderId)) {
-            return $orderId;
+            return;
         }
 
         $message = __('Are you sure you want to delete this order permanently?');

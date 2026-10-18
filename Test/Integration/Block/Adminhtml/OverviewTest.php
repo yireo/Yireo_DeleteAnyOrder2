@@ -8,7 +8,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\AbstractBackendController;
 use Magento\TestFramework\Request;
 use Magento\Framework\View\Result\PageFactory;
-use Magento\Framework\View\Result\Page\Interceptor as ResultPage;
+use Magento\Framework\View\Result\Page as ResultPage;
 use Magento\Backend\App\Action\Context as ActionContext;
 use Yireo\DeleteAnyOrder2\Controller\Adminhtml\Index\Index;
 
