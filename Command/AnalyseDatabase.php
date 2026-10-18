@@ -37,7 +37,7 @@ class AnalyseDatabase extends Command
     /**
      * Configure the command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("deleteanyorder:analyse");
         $this->setDescription("Analyse the Magento database for renegade orders.");
@@ -49,11 +49,13 @@ class AnalyseDatabase extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null|void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $callback = [$output, 'writeln'];
         $this->fixer->analyse($callback);
+
+        return Command::SUCCESS;
     }
 }

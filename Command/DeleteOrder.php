@@ -60,7 +60,7 @@ class DeleteOrder extends Command
     /**
      * Configure the command
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName("deleteanyorder:delete");
         $this->setDescription("Delete an order from the Magento database.");
@@ -77,16 +77,16 @@ class DeleteOrder extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|null|void
+     * @return int
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $orderId = $input->getArgument('order_id');
 
         if (empty($orderId)) {
             $output->writeln('Invalid order ID');
-            return;
+            return Command::FAILURE;
         }
 
         $this->state->setAreaCode(Area::AREA_ADMINHTML);
@@ -96,5 +96,7 @@ class DeleteOrder extends Command
         $this->orderRepository->delete($order);
 
         $output->writeln("Removed order succesfully");
+
+        return Command::SUCCESS;
     }
 }
