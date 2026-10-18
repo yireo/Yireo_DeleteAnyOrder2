@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Test\Unit\ViewModel;
 
-use Mockery;
 use PHPUnit\Framework\TestCase;
 use Yireo\DeleteAnyOrder2\ViewModel\Fixer as TestTarget;
 use Yireo\DeleteAnyOrder2\Fixer\Fixer as MainFixer;
@@ -15,6 +14,11 @@ use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
  */
 class FixerTest extends TestCase
 {
+    /**
+     * @var AbstractTable[]
+     */
+    private array $tables = [];
+
     /**
      * Test the behaviour of getTables()
      */
@@ -65,14 +69,12 @@ class FixerTest extends TestCase
      */
     private function getMainFixer(): MainFixer
     {
-        $mainFixer = Mockery::mock(MainFixer::class);
-        $mainFixer->allows()->getTables()->andReturns($this->getMainFixerTableStub());
-
         $table = $this->getMainFixerTable();
-        $mainFixer->allows()->getOrphansCountPerTable($table)->andReturns($this->getMainFixerOrphansCountStub());
 
-        $table = $this->getMainFixerTable();
-        $mainFixer->allows()->getTotalsPerTable($table)->andReturns($this->getMainFixerTotalsStub());
+        $mainFixer = $this->createMock(MainFixer::class);
+        $mainFixer->method('getTables')->willReturn($this->getMainFixerTableStub());
+        $mainFixer->method('getOrphansCountPerTable')->with($table)->willReturn($this->getMainFixerOrphansCountStub());
+        $mainFixer->method('getTotalsPerTable')->with($table)->willReturn($this->getMainFixerTotalsStub());
 
         return $mainFixer;
     }
@@ -82,15 +84,13 @@ class FixerTest extends TestCase
      */
     private function getMainFixerTableStub(): array
     {
-        static $tables = null;
-
-        if (empty($tables)) {
-            $tables = [
-                Mockery::mock(AbstractTable::class)
+        if (empty($this->tables)) {
+            $this->tables = [
+                $this->createMock(AbstractTable::class)
             ];
         }
 
-        return $tables;
+        return $this->tables;
     }
 
     /**
