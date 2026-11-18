@@ -6,5 +6,6 @@
         "Magento_Sales",
         "Magento_Store",
         "Magento_Ui"
-    ]
+    ],
+    "phpstan_level": "1"
 }
