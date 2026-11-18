@@ -5,6 +5,7 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Select;
 use RuntimeException;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\OrderId as OrderIdProvider;
 use Yireo\DeleteAnyOrder2\Fixer\DataProvider\Table as TableProvider;
@@ -135,13 +136,18 @@ class Fixer
             return 0;
         }
 
-        $tableName = $table->getTableName();
-        $orderIdField = $table->getOrderIdField();
-        $salesOrderTable = $this->getConnection()->getTableName('sales_order');
-        $query = 'SELECT COUNT(`%s`) FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `'.$salesOrderTable.'`)';
-        $sql = sprintf($query, $orderIdField, $tableName, $orderIdField);
+        $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
+        $select = $this->getConnection()->select()
+            ->from($table->getTableName(), ['COUNT(' . $orderIdField . ')'])
+            ->where($orderIdField . ' NOT IN (?)', $this->getSalesOrderIdsSelect());
 
-        return (int)$this->getConnection()->fetchOne($sql);
+        return (int)$this->getConnection()->fetchOne($select);
+    }
+
+    private function getSalesOrderIdsSelect(): Select
+    {
+        return $this->getConnection()->select()
+            ->from($this->getConnection()->getTableName('sales_order'), ['entity_id']);
     }
 
     /**
@@ -151,12 +157,11 @@ class Fixer
      */
     public function getTotalsPerTable(AbstractTable $table): int
     {
-        $tableName = $table->getTableName();
-        $orderIdField = $table->getOrderIdField();
-        $query = 'SELECT COUNT(`%s`) FROM `%s`';
-        $sql = sprintf($query, $orderIdField, $tableName);
+        $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
+        $select = $this->getConnection()->select()
+            ->from($table->getTableName(), ['COUNT(' . $orderIdField . ')']);
 
-        return (int)$this->getConnection()->fetchOne($sql);
+        return (int)$this->getConnection()->fetchOne($select);
     }
 
     /**
@@ -170,27 +175,16 @@ class Fixer
             return;
         }
 
-        $orderIds = $this->getCurrentOrderIds();
-        $hasOrderIds = (empty($orderIds)) ? false : true;
         $this->loggerCallback = $loggerCallback;
 
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
-            $orderIdField = $table->getOrderIdField();
-            $salesOrderTable = $this->getConnection()->getTableName('sales_order');
-
-            if ($hasOrderIds) {
-                $query = 'DELETE FROM `%s` WHERE `%s`';
-            } else {
-                $query = 'DELETE FROM `%s` WHERE `%s` NOT IN (SELECT `entity_id` FROM `'.$salesOrderTable.'`)';
-            }
-
-            $sql = sprintf($query, $tableName, $orderIdField, implode(',', $orderIds));
-
-            $this->getConnection()->query($sql);
+            $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
+            $where = [$orderIdField . ' NOT IN (?)' => $this->getSalesOrderIdsSelect()];
+            $deleted = $this->getConnection()->delete($tableName, $where);
 
             if ($this->verbosity > 0) {
-                $this->log($sql);
+                $this->log(sprintf('Deleted %d rows from %s', $deleted, $tableName));
             }
 
             $this->log(sprintf('Removed all orders orphans in %s', $tableName));
