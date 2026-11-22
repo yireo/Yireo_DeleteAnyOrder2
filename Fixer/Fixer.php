@@ -17,6 +17,8 @@ use Yireo\DeleteAnyOrder2\Fixer\DataProvider\Table as TableProvider;
  */
 class Fixer
 {
+    private const DELETE_CHUNK_SIZE = 1000;
+
     /**
      * @var callable
      */
@@ -136,18 +138,69 @@ class Fixer
             return 0;
         }
 
-        $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
         $select = $this->getConnection()->select()
-            ->from($table->getTableName(), ['COUNT(' . $orderIdField . ')'])
-            ->where($orderIdField . ' NOT IN (?)', $this->getSalesOrderIdsSelect());
+            ->from($table->getTableName(), ['COUNT(*)']);
+        $this->applyConditions($select, $this->getOrphanConditions($table));
 
         return (int)$this->getConnection()->fetchOne($select);
     }
 
-    private function getSalesOrderIdsSelect(): Select
+    /**
+     * @param AbstractTable $table
+     *
+     * @return array
+     */
+    private function getOrphanConditions(AbstractTable $table): array
     {
-        return $this->getConnection()->select()
-            ->from($this->getConnection()->getTableName('sales_order'), ['entity_id']);
+        $conditions = $table->getOrphanConditions();
+        foreach ($table->getConditions() as $condition) {
+            $conditions[] = $condition;
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * @param Select $select
+     * @param array $conditions
+     */
+    private function applyConditions(Select $select, array $conditions): void
+    {
+        foreach ($conditions as $condition => $value) {
+            if (is_int($condition)) {
+                $select->where($value);
+                continue;
+            }
+
+            $select->where($condition, $value);
+        }
+    }
+
+    /**
+     * @param AbstractTable $table
+     *
+     * @return int
+     */
+    private function deleteOrphans(AbstractTable $table): int
+    {
+        $connection = $this->getConnection();
+        $tableName = $table->getTableName();
+        $conditions = $this->getOrphanConditions($table);
+        $primaryKey = $table->getPrimaryKeyField();
+        if ($primaryKey === '') {
+            return $connection->delete($tableName, $conditions);
+        }
+
+        $select = $connection->select()->from($tableName, [$primaryKey]);
+        $this->applyConditions($select, $conditions);
+
+        $deleted = 0;
+        $ids = array_map('intval', $connection->fetchCol($select));
+        foreach (array_chunk($ids, self::DELETE_CHUNK_SIZE) as $chunk) {
+            $deleted += $table->deleteByPrimaryKeys($chunk);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -157,9 +210,9 @@ class Fixer
      */
     public function getTotalsPerTable(AbstractTable $table): int
     {
-        $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
         $select = $this->getConnection()->select()
-            ->from($table->getTableName(), ['COUNT(' . $orderIdField . ')']);
+            ->from($table->getTableName(), ['COUNT(' . $table->getOrderIdExpression() . ')']);
+        $this->applyConditions($select, $table->getConditions());
 
         return (int)$this->getConnection()->fetchOne($select);
     }
@@ -179,9 +232,7 @@ class Fixer
 
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
-            $orderIdField = $this->getConnection()->quoteIdentifier($table->getOrderIdField());
-            $where = [$orderIdField . ' NOT IN (?)' => $this->getSalesOrderIdsSelect()];
-            $deleted = $this->getConnection()->delete($tableName, $where);
+            $deleted = $this->deleteOrphans($table);
 
             if ($this->verbosity > 0) {
                 $this->log(sprintf('Deleted %d rows from %s', $deleted, $tableName));
@@ -199,7 +250,10 @@ class Fixer
         $tables = [];
         $tableClasses = $this->tableProvider->getTableClasses();
         foreach ($tableClasses as $tableClass) {
-            $tables[] = $this->tableFactory->create($tableClass);
+            $table = $this->tableFactory->create($tableClass);
+            if ($table->isAvailable()) {
+                $tables[] = $table;
+            }
         }
 
         return $tables;

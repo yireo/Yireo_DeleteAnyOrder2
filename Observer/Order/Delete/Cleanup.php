@@ -5,21 +5,33 @@ namespace Yireo\DeleteAnyOrder2\Observer\Order\Delete;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Yireo\DeleteAnyOrder2\Fixer\Table\InventoryReservation;
 
-/**
- * Class Cleanup
- *
- * @package Yireo\DeleteAnyOrder2\Observer\Deleteanyorder2\Order\Delete
- */
 class Cleanup implements ObserverInterface
 {
     /**
-     * @param Observer $observer
-     *
-     * @return ObserverInterface
+     * @param InventoryReservation $inventoryReservation
      */
-    public function execute(Observer $observer)
+    public function __construct(
+        private readonly InventoryReservation $inventoryReservation
+    ) {
+    }
+
+    /**
+     * @param Observer $observer
+     * @return void
+     */
+    public function execute(Observer $observer): void
     {
-        return $this;
+        $order = $observer->getEvent()->getData('order');
+        if (!$order instanceof OrderInterface) {
+            return;
+        }
+
+        $this->inventoryReservation->deleteByOrderId(
+            (int)$order->getEntityId(),
+            (string)$order->getIncrementId()
+        );
     }
 }

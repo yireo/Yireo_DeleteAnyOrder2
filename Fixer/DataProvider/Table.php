@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Fixer\DataProvider;
 
+use Yireo\DeleteAnyOrder2\Fixer\Table\InventoryReservation;
 use Yireo\DeleteAnyOrder2\Fixer\Table\SalesCreditmemo;
 use Yireo\DeleteAnyOrder2\Fixer\Table\SalesInvoice;
 use Yireo\DeleteAnyOrder2\Fixer\Table\SalesInvoiceGrid;
@@ -41,6 +42,7 @@ class Table
             SalesPaymentTransaction::class,
             SalesShipment::class,
             SalesShipmentGrid::class,
+            InventoryReservation::class,
         ];
     }
 }
