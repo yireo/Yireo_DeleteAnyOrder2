@@ -7,6 +7,8 @@
 ![Latest Version](https://img.shields.io/packagist/v/yireo/magento2-deleteanyorder2)
 <!-- badges.specs.end -->
 
+### MSI reservations
+When MSI (`Magento_InventoryReservations`) is installed, deleting an order also deletes its rows in the table `inventory_reservation`, so that the reserved quantity becomes salable again. Reservations of orders that were deleted earlier are listed by `bin/magento deleteanyorder:analyse` and removed by `bin/magento deleteanyorder:fix`. As an alternative, MSI can compensate them: `bin/magento inventory:reservation:list-inconsistencies -r | bin/magento inventory:reservation:create-compensations`.
 
 ### Unit tests
 Install this module via composer in Magento 2 and then run:
