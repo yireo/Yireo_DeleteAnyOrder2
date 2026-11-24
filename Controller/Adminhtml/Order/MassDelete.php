@@ -3,44 +3,33 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
+use Magento\Ui\Component\MassAction\Filter;
+use Yireo\DeleteAnyOrder2\Order\OrderDeleter;
 
-/**
- * Class MassDelete
- *
- * @package Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order
- */
-class MassDelete extends Action
+class MassDelete extends Action implements HttpPostActionInterface
 {
-    /**
-     * ACL resource
-     */
-    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::index';
+    public const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::delete_order';
 
     /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
-     * MassReindex constructor.
-     *
      * @param Context $context
-     * @param ResultRedirectFactory $resultRedirectFactory
-     * @param OrderRepositoryInterface $orderRepository
+     * @param Filter $filter
+     * @param CollectionFactory $collectionFactory
+     * @param OrderDeleter $orderDeleter
      */
     public function __construct(
         Context $context,
-        ResultRedirectFactory $resultRedirectFactory,
-        OrderRepositoryInterface $orderRepository
+        private readonly Filter $filter,
+        private readonly CollectionFactory $collectionFactory,
+        private readonly OrderDeleter $orderDeleter
     ) {
         parent::__construct($context);
-        $this->resultRedirectFactory = $resultRedirectFactory;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -48,40 +37,32 @@ class MassDelete extends Action
      */
     public function execute(): ResultInterface
     {
-        $orderIds = $this->getOrderIds();
-        if ($this->deleteByOrderIds($orderIds)) {
-            $count = count($orderIds);
-            $this->messageManager->addNoticeMessage(sprintf('Removed %d orders', $count));
-        } else {
-            $this->messageManager->addNoticeMessage('Removed 0 orders');
-        }
-
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('sales/order/index');
-        return $resultRedirect;
-    }
 
-    /**
-     * @return array
-     */
-    private function getOrderIds(): array
-    {
-        $orderIds = $this->_request->getParam('selected');
-        return (array) $orderIds;
-    }
-
-    /**
-     * @param array $orderIds
-     *
-     * @return bool
-     */
-    private function deleteByOrderIds(array $orderIds): bool
-    {
-        foreach ($orderIds as $orderId) {
-            $order = $this->orderRepository->get($orderId);
-            $this->orderRepository->delete($order);
+        try {
+            $orderIds = $this->filter->getCollection($this->collectionFactory->create())->getAllIds();
+        } catch (LocalizedException $exception) {
+            $this->messageManager->addErrorMessage($exception->getMessage());
+            return $resultRedirect;
         }
 
-        return true;
+        $deleted = 0;
+        $failed = 0;
+        foreach ($orderIds as $orderId) {
+            try {
+                $this->orderDeleter->delete((int)$orderId);
+                $deleted++;
+            } catch (Exception $exception) {
+                $failed++;
+            }
+        }
+
+        $this->messageManager->addNoticeMessage(__('Removed %1 orders', $deleted));
+        if ($failed > 0) {
+            $this->messageManager->addErrorMessage(__('Unable to remove %1 orders', $failed));
+        }
+
+        return $resultRedirect;
     }
 }

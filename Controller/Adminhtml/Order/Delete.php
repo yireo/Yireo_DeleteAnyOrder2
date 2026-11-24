@@ -3,44 +3,27 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\Controller\Result\RedirectFactory as ResultRedirectFactory;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Yireo\DeleteAnyOrder2\Order\OrderDeleter;
 
-/**
- * Class Delete
- *
- * @package Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order
- */
-class Delete extends Action
+class Delete extends Action implements HttpPostActionInterface
 {
-    /**
-     * ACL resource
-     */
-    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::index';
+    public const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::delete_order';
 
     /**
-     * @var OrderRepositoryInterface
-     */
-    private $orderRepository;
-
-    /**
-     * MassReindex constructor.
-     *
      * @param Context $context
-     * @param ResultRedirectFactory $resultRedirectFactory
-     * @param OrderRepositoryInterface $orderRepository
+     * @param OrderDeleter $orderDeleter
      */
     public function __construct(
         Context $context,
-        ResultRedirectFactory $resultRedirectFactory,
-        OrderRepositoryInterface $orderRepository
+        private readonly OrderDeleter $orderDeleter
     ) {
         parent::__construct($context);
-        $this->resultRedirectFactory = $resultRedirectFactory;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -48,31 +31,34 @@ class Delete extends Action
      */
     public function execute(): ResultInterface
     {
-        $orderId = (int)$this->_request->getParam('order_id');
-        if ($this->deleteByOrderId($orderId)) {
-            $this->messageManager->addNoticeMessage('Removed order');
-            $redirectPath = 'sales/order/index';
-        } else {
-            $this->messageManager->addNoticeMessage('Unable to removed order');
-            $redirectPath = 'sales/order/view/order_id/'.$orderId;
+        $orderId = (int)$this->getRequest()->getParam('order_id');
+
+        try {
+            $this->orderDeleter->delete($orderId);
+        } catch (LocalizedException $exception) {
+            $this->messageManager->addErrorMessage(__('Unable to remove order: %1', $exception->getMessage()));
+            return $this->redirectToOrder($orderId);
+        } catch (Exception $exception) {
+            $this->messageManager->addExceptionMessage($exception, __('Unable to remove order'));
+            return $this->redirectToOrder($orderId);
         }
 
-        $resultRedirect = $this->resultRedirectFactory->create();
-        $resultRedirect->setPath($redirectPath);
+        $this->messageManager->addNoticeMessage(__('Removed order'));
 
-        return $resultRedirect;
+        return $this->resultRedirectFactory->create()->setPath('sales/order/index');
     }
 
     /**
      * @param int $orderId
-     *
-     * @return bool
+     * @return ResultInterface
      */
-    private function deleteByOrderId(int $orderId): bool
+    private function redirectToOrder(int $orderId): ResultInterface
     {
-        $order = $this->orderRepository->get($orderId);
-        $this->orderRepository->delete($order);
+        $resultRedirect = $this->resultRedirectFactory->create();
+        if ($orderId > 0) {
+            return $resultRedirect->setPath('sales/order/view', ['order_id' => $orderId]);
+        }
 
-        return true;
+        return $resultRedirect->setPath('sales/order/index');
     }
 }

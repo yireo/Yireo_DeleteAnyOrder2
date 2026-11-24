@@ -1,5 +1,13 @@
 import {expect, test} from '@playwright/test';
-import {ADMIN_USER, addToNewCart, configure, deleteOrderInAdmin, placeOrder} from './lib/delete-any-order';
+import {
+    ADMIN_USER,
+    addToNewCart,
+    configure,
+    deleteOrderInAdmin,
+    deleteOrderWithGetRequest,
+    openOrderInAdmin,
+    placeOrder,
+} from './lib/delete-any-order';
 
 test.describe('Delete order releases its MSI reservation', () => {
     test('a product with qty 1 becomes salable again after deleting its order', async ({page}) => {
@@ -22,6 +30,10 @@ test.describe('Delete order releases its MSI reservation', () => {
 
         const beforeDelete = await addToNewCart(page, sku);
         expect(beforeDelete.response.ok(), 'The ordered product is still salable').toBeFalsy();
+
+        await deleteOrderWithGetRequest(page, orderId);
+        await openOrderInAdmin(page, orderId);
+        await expect(page.getByRole('button', {name: 'Delete', exact: true}), 'A GET request deleted the order').toBeVisible();
 
         await deleteOrderInAdmin(page, orderId);
 

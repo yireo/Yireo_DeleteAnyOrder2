@@ -5,51 +5,26 @@ namespace Yireo\DeleteAnyOrder2\Controller\Adminhtml\Index;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Backend\Model\View\Result\RedirectFactory;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Message\ManagerInterface;
 use Yireo\DeleteAnyOrder2\Fixer\Fixer;
+use Yireo\DeleteAnyOrder2\Logger\AuditLogger;
 
-/**
- * Class Fix
- *
- * @package Yireo\DeleteAnyOrder2\Controller\Adminhtml\Index
- */
-class Fix extends Action
+class Fix extends Action implements HttpPostActionInterface
 {
-    /**
-     * ACL resource
-     */
-    const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::index';
+    public const ADMIN_RESOURCE = 'Yireo_DeleteAnyOrder2::fix';
 
     /**
-     * @var Fixer
-     */
-    private $fixer;
-
-    /**
-     * @var RedirectFactory
-     */
-    private $redirectFactory;
-
-    /**
-     * MassReindex constructor.
-     *
      * @param Context $context
      * @param Fixer $fixer
-     * @param RedirectFactory $redirectFactory
-     * @param ManagerInterface $messageManager
+     * @param AuditLogger $auditLogger
      */
     public function __construct(
         Context $context,
-        Fixer $fixer,
-        RedirectFactory $redirectFactory,
-        ManagerInterface $messageManager
+        private readonly Fixer $fixer,
+        private readonly AuditLogger $auditLogger
     ) {
         parent::__construct($context);
-        $this->fixer = $fixer;
-        $this->redirectFactory = $redirectFactory;
-        $this->messageManager = $messageManager;
     }
 
     /**
@@ -57,13 +32,14 @@ class Fix extends Action
      */
     public function execute(): ResultInterface
     {
-        $callback = [$this->messageManager, 'addNoticeMessage'];
-        $this->fixer->fix($callback);
+        $callback = function (string $message): void {
+            $this->messageManager->addNoticeMessage($message);
+        };
 
-        $this->messageManager->addNoticeMessage('Fixed the database');
+        $deletedRows = $this->fixer->fix($callback);
+        $this->auditLogger->log('Fixed the database', ['deleted_rows' => $deletedRows]);
+        $this->messageManager->addNoticeMessage(__('Fixed the database'));
 
-        $redirect = $this->redirectFactory->create();
-        $redirect->setPath('deleteanyorder/index/index');
-        return $redirect;
+        return $this->resultRedirectFactory->create()->setPath('deleteanyorder/index/index');
     }
 }

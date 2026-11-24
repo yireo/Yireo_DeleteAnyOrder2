@@ -2,7 +2,7 @@ import {APIResponse, expect, Page} from '@playwright/test';
 
 export const ADMIN_USER = {
     username: 'deleteanyorder_admin',
-    password: 'P@ssw0rd1234x',
+    password: process.env.DELETEANYORDER_ADMIN_PASSWORD || 'P@ssw0rd1234x',
     email: 'deleteanyorder_admin@example.com',
     firstname: 'Delete',
     lastname: 'AnyOrder',
@@ -16,6 +16,8 @@ export const ADMIN_USER = {
         'Magento_Backend::system',
         'Magento_Backend::tools',
         'Yireo_DeleteAnyOrder2::index',
+        'Yireo_DeleteAnyOrder2::fix',
+        'Yireo_DeleteAnyOrder2::delete_order',
     ],
 };
 
@@ -109,6 +111,19 @@ export async function loginAsAdmin(page: Page) {
     await page.locator('#login').fill(ADMIN_USER.password);
     await page.locator('.action-login').click();
     await expect(page.locator('#username'), 'Admin login failed').toHaveCount(0);
+}
+
+export async function openOrderInAdmin(page: Page, orderId: string) {
+    await loginAsAdmin(page);
+    await page.goto(`/${adminPath()}/sales/order/view/order_id/${orderId}/`);
+}
+
+/**
+ * Try to delete the order with a plain GET request (like a CSRF attack would do)
+ */
+export async function deleteOrderWithGetRequest(page: Page, orderId: string) {
+    await loginAsAdmin(page);
+    await page.goto(`/${adminPath()}/deleteanyorder/order/delete/order_id/${orderId}/`);
 }
 
 export async function deleteOrderInAdmin(page: Page, orderId: string) {
