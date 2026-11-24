@@ -14,6 +14,13 @@ class AddDeleteButtonToOrderViewTest extends AbstractBackendController
 {
     use OrderTestTrait;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->resource = 'Magento_Sales::actions_view';
+        $this->uri = 'backend/sales/order/view';
+    }
+
     /**
      * @magentoDataFixture Magento/Sales/_files/order.php
      * @magentoDbIsolation enabled
@@ -24,9 +31,10 @@ class AddDeleteButtonToOrderViewTest extends AbstractBackendController
         $body = (string)$this->getResponse()->getBody();
 
         $this->assertStringContainsString('id="deleteanyorder"', $body);
-        $this->assertStringContainsString('deleteConfirm(', $body);
-        $this->assertStringContainsString('{data: {}}', $body);
-        $this->assertStringNotContainsString('confirmSetLocation(', $body);
+        $this->assertMatchesRegularExpression(
+            "/deleteConfirm\\('[^']+', '[^']*deleteanyorder[^']*', \\{data: \\{\\}\\}\\)/",
+            $body
+        );
     }
 
     /**
