@@ -18,13 +18,36 @@
 
     <type name="Yireo\DeleteAnyOrder2\Command\DeleteOrder">
         <arguments>
-            <argument name="orderRepository" xsi:type="object">Magento\Sales\Api\OrderRepositoryInterface\Proxy</argument>
+            <argument name="orderDeleter" xsi:type="object">Yireo\DeleteAnyOrder2\Order\OrderDeleter\Proxy</argument>
         </arguments>
     </type>
 
     <type name="Yireo\DeleteAnyOrder2\Command\FixDatabase">
         <arguments>
             <argument name="fixer" xsi:type="object">Yireo\DeleteAnyOrder2\Fixer\Fixer\Proxy</argument>
+            <argument name="auditLogger" xsi:type="object">Yireo\DeleteAnyOrder2\Logger\AuditLogger\Proxy</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Yireo\DeleteAnyOrder2\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/deleteanyorder.log</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Yireo\DeleteAnyOrder2\Logger\Logger" type="Monolog\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">deleteanyorder</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="file" xsi:type="object">Yireo\DeleteAnyOrder2\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Yireo\DeleteAnyOrder2\Logger\AuditLogger">
+        <arguments>
+            <argument name="logger" xsi:type="object">Yireo\DeleteAnyOrder2\Logger\Logger</argument>
+            <argument name="authSession" xsi:type="object">Magento\Backend\Model\Auth\Session\Proxy</argument>
         </arguments>
     </type>
 </config>
