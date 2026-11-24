@@ -29,14 +29,15 @@ class OrderId
     }
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getData(): array
+    public function hasOrders(): bool
     {
         $connection = $this->resourceConnection->getConnection();
         $select = $connection->select()
-            ->from($this->resourceConnection->getTableName('sales_order'), ['entity_id']);
+            ->from($this->resourceConnection->getTableName('sales_order'), ['entity_id'])
+            ->limit(1);
 
-        return $connection->fetchCol($select);
+        return (bool)$connection->fetchOne($select);
     }
 }

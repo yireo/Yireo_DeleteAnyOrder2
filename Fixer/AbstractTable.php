@@ -5,6 +5,7 @@ namespace Yireo\DeleteAnyOrder2\Fixer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Select;
+use Magento\Framework\DB\Sql\Expression;
 
 /**
  * Class AbstractTable
@@ -56,7 +57,9 @@ abstract class AbstractTable
      */
     public function getOrderIdExpression(): string
     {
-        return $this->resourceConnection->getConnection()->quoteIdentifier($this->getOrderIdField());
+        return $this->resourceConnection->getConnection()->quoteIdentifier(
+            [$this->getTableName(), $this->getOrderIdField()]
+        );
     }
 
     /**
@@ -72,7 +75,16 @@ abstract class AbstractTable
      */
     public function getOrphanConditions(): array
     {
-        return [$this->getOrderIdExpression() . ' NOT IN (?)' => $this->getSalesOrderSelect('entity_id')];
+        $connection = $this->resourceConnection->getConnection();
+        $orderIdExpression = $this->getOrderIdExpression();
+        $salesOrderSelect = $connection->select()
+            ->from(['orphan_check' => $this->resourceConnection->getTableName('sales_order')], [new Expression('1')])
+            ->where($connection->quoteIdentifier(['orphan_check', 'entity_id']) . ' = ' . $orderIdExpression);
+
+        return [
+            $orderIdExpression . ' IS NOT NULL',
+            'NOT EXISTS (' . $salesOrderSelect->assemble() . ')',
+        ];
     }
 
     /**

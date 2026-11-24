@@ -50,9 +50,9 @@ class Fixer
     private $verbosity = 0;
 
     /**
-     * @var int[]
+     * @var bool|null
      */
-    private $currentOrderIds = [];
+    private $hasOrders = null;
 
     /**
      * Fixer constructor.
@@ -78,15 +78,15 @@ class Fixer
     }
 
     /**
-     * @return int[]
+     * @return bool
      */
-    private function getCurrentOrderIds(): array
+    private function hasOrders(): bool
     {
-        if (empty($this->currentOrderIds)) {
-            $this->currentOrderIds = $this->orderIdProvider->getData();
+        if ($this->hasOrders === null) {
+            $this->hasOrders = $this->orderIdProvider->hasOrders();
         }
 
-        return $this->currentOrderIds;
+        return $this->hasOrders;
     }
 
     /**
@@ -103,11 +103,8 @@ class Fixer
     private function init(callable $loggerCallback)
     {
         $this->loggerCallback = $loggerCallback;
-        $currentOrderIds = $this->getCurrentOrderIds();
 
-        $this->log('Found %d valid orders', count($currentOrderIds));
-
-        if (empty($currentOrderIds)) {
+        if (!$this->hasOrders()) {
             throw new RuntimeException('No orders to clean up');
         }
     }
@@ -133,8 +130,7 @@ class Fixer
      */
     public function getOrphansCountPerTable(AbstractTable $table): int
     {
-        $currentOrderIds = $this->getCurrentOrderIds();
-        if (empty($currentOrderIds)) {
+        if (!$this->hasOrders()) {
             return 0;
         }
 
@@ -219,20 +215,21 @@ class Fixer
 
     /**
      * @param callable $loggerCallback
+     * @return array<string, int> Deleted rows per table
      */
-    public function fix(callable $loggerCallback)
+    public function fix(callable $loggerCallback): array
     {
         try {
             $this->init($loggerCallback);
         } catch (RuntimeException $e) {
-            return;
+            return [];
         }
 
-        $this->loggerCallback = $loggerCallback;
-
+        $deletedRows = [];
         foreach ($this->getTables() as $table) {
             $tableName = $table->getTableName();
             $deleted = $this->deleteOrphans($table);
+            $deletedRows[$tableName] = $deleted;
 
             if ($this->verbosity > 0) {
                 $this->log(sprintf('Deleted %d rows from %s', $deleted, $tableName));
@@ -240,6 +237,8 @@ class Fixer
 
             $this->log(sprintf('Removed all orders orphans in %s', $tableName));
         }
+
+        return $deletedRows;
     }
 
     /**
