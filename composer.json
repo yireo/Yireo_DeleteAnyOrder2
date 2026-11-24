@@ -40,5 +40,14 @@
         "files": [
             "registration.php"
         ]
+    },
+    "archive": {
+        "exclude": [
+            "/Test",
+            "/.github",
+            "/phpunit.xml.dist",
+            "/ci-details",
+            "/.module.ini"
+        ]
     }
 }
