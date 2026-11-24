@@ -5,7 +5,6 @@ namespace Yireo\DeleteAnyOrder2\Plugin;
 
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Escaper;
-use Magento\Framework\View\LayoutInterface;
 use Magento\Sales\Block\Adminhtml\Order\View as OrderView;
 use Yireo\DeleteAnyOrder2\Controller\Adminhtml\Order\Delete;
 
@@ -23,11 +22,9 @@ class AddDeleteButtonToOrderView
 
     /**
      * @param OrderView $subject
-     * @param LayoutInterface $layout
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeSetLayout(OrderView $subject, LayoutInterface $layout): void
+    public function beforeSetLayout(OrderView $subject): void
     {
         $orderId = (int)$subject->getOrderId();
         if ($orderId < 1 || !$this->authorization->isAllowed(Delete::ADMIN_RESOURCE)) {
