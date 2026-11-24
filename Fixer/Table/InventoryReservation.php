@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yireo\DeleteAnyOrder2\Fixer\Table;
 
+use InvalidArgumentException;
 use Magento\Framework\App\ResourceConnection;
 use Yireo\DeleteAnyOrder2\Fixer\AbstractTable;
 use Yireo\DeleteAnyOrder2\Inventory\SalabilityUpdater;
@@ -10,6 +11,8 @@ use Yireo\DeleteAnyOrder2\Inventory\SalabilityUpdater;
 class InventoryReservation extends AbstractTable
 {
     private const ORDER_ID_PATTERN = '^[1-9][0-9]*$';
+
+    private const METADATA_KEYS = ['object_id', 'object_type', 'object_increment_id'];
 
     protected string $tableName = 'inventory_reservation';
     protected string $orderIdField = 'metadata';
@@ -99,12 +102,12 @@ class InventoryReservation extends AbstractTable
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $orderCondition = $connection->quoteInto($this->getOrderIdExpression() . ' = ?', (string)$orderId);
+        $orderIdExpression = $this->getOrderIdExpression();
+        $orderCondition = $connection->quoteInto($orderIdExpression . ' = ?', (string)$orderId);
         if ($incrementId !== '') {
-            $orderCondition .= ' OR ' . $connection->quoteInto(
-                $this->getIncrementIdExpression() . ' = ?',
-                $incrementId
-            );
+            $orderCondition = '(' . $orderCondition . ') OR ('
+                . 'COALESCE(' . $orderIdExpression . ", '') NOT REGEXP '" . self::ORDER_ID_PATTERN . "' AND "
+                . $connection->quoteInto($this->getIncrementIdExpression() . ' = ?', $incrementId) . ')';
         }
 
         $select = $connection->select()
@@ -132,7 +135,7 @@ class InventoryReservation extends AbstractTable
         $connection = $this->resourceConnection->getConnection();
         $select = $connection->select()
             ->from($this->getTableName(), ['stock_id', 'sku'])
-            ->where($this->getPrimaryKeyField() . ' IN (?)', $ids);
+            ->where($connection->quoteIdentifier($this->getPrimaryKeyField()) . ' IN (?)', $ids);
 
         $skusByStockId = [];
         foreach ($connection->fetchAll($select) as $row) {
@@ -162,15 +165,21 @@ class InventoryReservation extends AbstractTable
             return $metadataExpression;
         }
 
-        return 'COALESCE(object_increment_id, ' . $metadataExpression . ')';
+        $column = $this->resourceConnection->getConnection()->quoteIdentifier('object_increment_id');
+        return 'COALESCE(' . $column . ', ' . $metadataExpression . ')';
     }
 
     /**
      * @param string $key
      * @return string
+     * @throws InvalidArgumentException
      */
     private function getMetadataExpression(string $key): string
     {
+        if (!in_array($key, self::METADATA_KEYS, true)) {
+            throw new InvalidArgumentException('Unsupported metadata key: ' . $key);
+        }
+
         return "(CASE WHEN JSON_VALID(metadata) THEN JSON_UNQUOTE(JSON_EXTRACT(metadata, '$." . $key . "')) END)";
     }
 }

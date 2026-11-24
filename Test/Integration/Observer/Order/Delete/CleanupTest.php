@@ -37,6 +37,7 @@ class CleanupTest extends TestCase
             $this->getOrderMetadata('1' . $orderId),
             $this->getOrderMetadata('', '1100000001'),
             $this->getOrderMetadata('', '10000000'),
+            $this->getOrderMetadata((string)($orderId + 1000), '100000001'),
             $this->getOrderMetadata((string)$orderId, '100000001', 'order_placed', 'quote'),
             $this->getOrderMetadata(''),
             'not-json',
