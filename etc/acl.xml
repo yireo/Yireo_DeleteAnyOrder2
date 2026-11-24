@@ -13,9 +13,20 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
+                <resource id="Magento_Sales::sales">
+                    <resource id="Magento_Sales::sales_operation">
+                        <resource id="Magento_Sales::sales_order">
+                            <resource id="Magento_Sales::actions">
+                                <resource id="Yireo_DeleteAnyOrder2::delete_order" title="Delete Orders Permanently" translate="title" sortOrder="200"/>
+                            </resource>
+                        </resource>
+                    </resource>
+                </resource>
                 <resource id="Magento_Backend::system">
                     <resource id="Magento_Backend::tools">
-                        <resource id="Yireo_DeleteAnyOrder2::index" title="Yireo DeleteAnyOrder" sortOrder="10"/>
+                        <resource id="Yireo_DeleteAnyOrder2::index" title="Yireo DeleteAnyOrder" translate="title" sortOrder="10">
+                            <resource id="Yireo_DeleteAnyOrder2::fix" title="Fix Database" translate="title" sortOrder="10"/>
+                        </resource>
                     </resource>
                 </resource>
             </resource>
