@@ -9,12 +9,6 @@
         "composer-installer",
         "magento"
     ],
-    "authors": [
-        {
-            "name": "Jisse Reitsma (Yireo)",
-            "email": "jisse@yireo.com"
-        }
-    ],
     "require": {
         "magento/framework": "^101.0.1|^101.0|^102.0|^103.0",
         "magento/framework-message-queue": "^100.2",
@@ -23,14 +17,16 @@
         "magento/module-store": "^100.2|^101.0",
         "magento/module-ui": "^101.0",
         "monolog/monolog": "^2.0 || ^3.0",
-        "psr/log": "^1.0 || ^2.0 || ^3.0",
-        "php": ">=8.2 <8.6"
+        "php": ">=8.2 <8.6",
+        "psr/log": "^1.0 || ^2.0 || ^3.0"
     },
     "suggest": {
         "magento/module-inventory-reservations": "Deleting an order also deletes its MSI reservations"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5"
+        "loki/magento2-functional-tests": "@dev",
+        "phpunit/phpunit": "^10.5",
+        "yireo/magento2-integration-test-helper": "~0.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit"
