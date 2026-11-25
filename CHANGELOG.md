@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 25 November 2026
+### Added
+- Separate ACL resources for deleting orders and for fixing the database, granted automatically to admin roles that already had access to the module
+- Audit log of deleted orders and database fixes in `var/log/deleteanyorder.log`
+- `deleteanyorder:delete` validates the order ID and asks for confirmation (skip with `--force`); `deleteanyorder:fix` gets `--dry-run` and `--force` options
+- PHP 8.5 support
+
+### Changed
+- Finding orphaned records no longer loads all order IDs into memory, and the fix reports the number of deleted rows per table
+
+### Fixed
+- Deleting an order left its MSI reservations behind, so products stayed unsalable (#3)
+- Fixing the database deleted related rows of existing orders instead of only orphaned ones
+- Console commands failing with Symfony 7 (Magento 2.4.9)
+- Composer conflicts with Magento 2.4.8 from an outdated phpunit requirement, and missing monolog/monolog and psr/log dependencies
+
+### Removed
+- PHP 8.1 support
+
+### Security
+- Deleting orders, mass deleting orders and fixing the database now require a POST request with a valid form key and the matching ACL permission, closing a CSRF hole via GET requests
+- Hardened SQL expressions by quoting identifiers and allow-listing metadata keys
+
 ## [1.0.8] - 22 October 2025
 ### Fixed
 - Remove setup version
