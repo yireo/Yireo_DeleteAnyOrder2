@@ -8,5 +8,40 @@
         "Magento_Ui"
     ],
     "phpstan_level": "1",
-    "phpcs_severity": "9"
+    "phpcs_severity": "9",
+    "php_versions": [
+        "8.1",
+        "8.2",
+        "8.3",
+        "8.4"
+    ],
+    "skip_magento_versions": [],
+    "skip_css_utils": false,
+    "modules": [
+        "Magento_AdminNotification",
+        "Magento_Backend",
+        "Magento_Catalog",
+        "Magento_Cms",
+        "Magento_Csp",
+        "Magento_Customer",
+        "Magento_Directory",
+        "Magento_Eav",
+        "Magento_Indexer",
+        "Magento_MediaGalleryUiApi",
+        "Magento_Payment",
+        "Magento_Rule",
+        "Magento_Sales",
+        "Magento_SalesSequence",
+        "Magento_Store",
+        "Magento_Theme",
+        "Magento_Ui",
+        "Magento_Variable"
+    ],
+    "components": [],
+    "config": [],
+    "tests": {
+        "unit": 14,
+        "integration": 19,
+        "functional": 1
+    }
 }
